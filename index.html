@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUFET • Compact Urban Form Estimation Tool</title>
+    <meta name="description" content="Explore the environmental benefits of compact urban form (rezoning) and EV adoption. Quantify VKT and road transport greenhouse gas emissions mitigation.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="dark-theme">
+    <div class="glow-container">
+        <div class="glow-sphere glow-1"></div>
+        <div class="glow-sphere glow-2"></div>
+    </div>
+
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <span class="logo-icon">🏙️</span>
+                <div>
+                    <h1>CUFET</h1>
+                    <p class="subtitle">Compact Urban Form Estimation Tool</p>
+                </div>
+            </div>
+            <div class="header-tag">
+                <span>Climate TRACE &amp; GHSL Powered</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <div class="dashboard-grid">
+            
+            <!-- LEFT PANEL: Inputs & Scenario Controls -->
+            <section class="control-panel glass-card">
+                <div class="card-header">
+                    <h2>1. Geographic &amp; Profile Settings</h2>
+                    <p class="card-subtitle">Select your target geography and establish baseline metrics</p>
+                </div>
+                
+                <form id="cufet-form" class="form-container" onsubmit="event.preventDefault();">
+                    <!-- Location Selector -->
+                    <div class="form-group row-group">
+                        <div class="field-item">
+                            <label for="country-select">Country</label>
+                            <div class="select-wrapper">
+                                <select id="country-select" required>
+                                    <option value="" disabled selected>Select Country...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field-item">
+                            <label for="city-select">City Lookup</label>
+                            <div class="select-wrapper">
+                                <select id="city-select">
+                                    <option value="">-- Custom / Manual --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom City Name -->
+                    <div class="form-group" id="custom-city-group">
+                        <label for="city-name-input">City Name</label>
+                        <input type="text" id="city-name-input" value="Example City" placeholder="Enter city name...">
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Baseline Parameters -->
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="pop-slider">Population (Baseline)</label>
+                            <span class="slider-val-badge" id="pop-val">500,000</span>
+                        </div>
+                        <input type="range" id="pop-slider" min="50000" max="10000000" step="5000" value="500000" class="custom-slider">
+                        <div class="slider-labels">
+                            <span>50k (Small)</span>
+                            <span>10M (Mega)</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="area-slider">Urban Land Area (Baseline)</label>
+                            <span class="slider-val-badge" id="area-val">300 km²</span>
+                        </div>
+                        <input type="range" id="area-slider" min="5" max="5000" step="5" value="300" class="custom-slider">
+                        <div class="slider-labels">
+                            <span>5 km²</span>
+                            <span>5,000 km²</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group info-row">
+                        <span class="density-label">Baseline Population Density:</span>
+                        <strong class="density-val" id="baseline-density">1,667 / km²</strong>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="ev-slider">Current EV Fleet Share</label>
+                            <span class="slider-val-badge" id="ev-val">0%</span>
+                        </div>
+                        <input type="range" id="ev-slider" min="0" max="100" step="1" value="0" class="custom-slider">
+                        <div class="slider-labels">
+                            <span>0% (All ICE)</span>
+                            <span>100% (All EV)</span>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="card-header mt-8">
+                    <h2>2. Rezoning &amp; EV Targets</h2>
+                    <p class="card-subtitle">Simulate compact urban growth and EV adoption targets</p>
+                </div>
+
+                <div class="form-container">
+                    <!-- Density/Compact Form Slider -->
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="compactness-slider" class="highlight-label">Compactness Shifting (Density Increase)</label>
+                            <span class="slider-val-badge highlight" id="compactness-val">Baseline (0%)</span>
+                        </div>
+                        <input type="range" id="compactness-slider" min="0" max="300" step="5" value="0" class="custom-slider accent">
+                        <div class="slider-labels">
+                            <span>Baseline (0%)</span>
+                            <span>+100% (2x Density)</span>
+                            <span>+300% (4x Density)</span>
+                        </div>
+                    </div>
+
+                    <!-- Future EV Slider -->
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label for="target-ev-slider">Target EV Fleet Share</label>
+                            <span class="slider-val-badge" id="target-ev-val">0%</span>
+                        </div>
+                        <input type="range" id="target-ev-slider" min="0" max="100" step="1" value="0" class="custom-slider">
+                        <div class="slider-labels">
+                            <span>0% (No change)</span>
+                            <span>100% (Fully Electrified)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: Visuals & Comparative Charts -->
+            <section class="visuals-panel">
+                
+                <!-- Density Map Visualizer -->
+                <article class="visualizer-card glass-card">
+                    <div class="visualizer-header">
+                        <div>
+                            <h2>Interactive City Density Visualizer</h2>
+                            <p class="card-subtitle" id="visualizer-subtitle">Simulating exurban sprawl vs. compact walkable corridors</p>
+                        </div>
+                        <div class="legend">
+                            <span class="legend-item"><span class="legend-color residential"></span>House</span>
+                            <span class="legend-item"><span class="legend-color highdense"></span>Apartment</span>
+                            <span class="legend-item"><span class="legend-color transit"></span>Transit</span>
+                        </div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="density-canvas"></canvas>
+                        <div class="canvas-overlay" id="compactness-overlay-text">0% Compactness</div>
+                    </div>
+                </article>
+
+                <!-- Impact Metrics Dashboard -->
+                <div class="metrics-grid">
+                    <article class="metric-card glass-card">
+                        <p class="metric-label">Vehicle Kilometers Traveled (VKT)</p>
+                        <div class="metric-comparison">
+                            <div class="metric-val current" id="metric-current-vkt">--</div>
+                            <div class="metric-arrow">➔</div>
+                            <div class="metric-val proposed" id="metric-proposed-vkt">--</div>
+                        </div>
+                        <p class="metric-sub" id="vkt-reduction-pct">-- reduction</p>
+                    </article>
+
+                    <article class="metric-card glass-card">
+                        <p class="metric-label">Annual CO₂e Footprint</p>
+                        <div class="metric-comparison">
+                            <div class="metric-val current" id="metric-current-co2">--</div>
+                            <div class="metric-arrow">➔</div>
+                            <div class="metric-val proposed" id="metric-proposed-co2">--</div>
+                        </div>
+                        <p class="metric-sub" id="co2-reduction-pct">-- reduction</p>
+                    </article>
+
+                    <article class="metric-card glass-card span-2 highlight-metric-card" id="capita-card">
+                        <div class="metric-flex">
+                            <div>
+                                <p class="metric-label">Transportation CO₂e Per Capita</p>
+                                <div class="metric-comparison inline">
+                                    <div class="metric-val current" id="metric-current-capita">--</div>
+                                    <div class="metric-arrow">➔</div>
+                                    <div class="metric-val proposed" id="metric-proposed-capita">--</div>
+                                </div>
+                                <p class="metric-sub text-white-muted" id="capita-sub-text">Baseline Profile</p>
+                            </div>
+                            <div class="budget-status-gauge">
+                                <div class="gauge-ring-bg"></div>
+                                <div class="gauge-ring-fill" id="gauge-fill"></div>
+                                <div class="gauge-ring-text" id="gauge-text">--</div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- comparative charts -->
+                <article class="charts-card glass-card">
+                    <div class="card-header">
+                        <h2>Scenario Comparison Analysis</h2>
+                    </div>
+                    <div class="charts-flex-container">
+                        <div class="chart-wrapper">
+                            <canvas id="chart-vkt"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-co2"></canvas>
+                        </div>
+                    </div>
+                </article>
+
+            </section>
+        </div>
+
+        <!-- BOTTOM PANEL: Elasticity Explanation & Methodology -->
+        <section class="explanation-panel glass-card mt-8">
+            <div class="explanation-grid">
+                <div>
+                    <h3>Model Logic &amp; City Size Band</h3>
+                    <p id="size-band-desc">
+                        Select a country and enter population to initialize the CUFET model classification.
+                    </p>
+                    <div class="elasticity-readouts mt-4" id="elasticity-badges">
+                        <div class="elasticity-badge">
+                            <span class="badge-label">Size Category:</span>
+                            <span class="badge-val" id="badge-size-cat">--</span>
+                        </div>
+                        <div class="elasticity-badge">
+                            <span class="badge-label">Density Elasticity:</span>
+                            <span class="badge-val" id="badge-density-elas">--</span>
+                        </div>
+                        <div class="elasticity-badge">
+                            <span class="badge-label">Population Elasticity:</span>
+                            <span class="badge-val" id="badge-pop-elas">--</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3>Geographic Baseline &amp; fixed effects</h3>
+                    <p id="geo-effects-desc">
+                        Each country has structural baselines determined by fixed effect coefficients ($\delta_k$) and emission intensities.
+                    </p>
+                    <div class="elasticity-readouts mt-4" id="geo-badges">
+                        <div class="elasticity-badge">
+                            <span class="badge-label">Country FE (&delta;<sub>k</sub>):</span>
+                            <span class="badge-val" id="badge-country-fe">--</span>
+                        </div>
+                        <div class="elasticity-badge">
+                            <span class="badge-label">Emission Intensity:</span>
+                            <span class="badge-val" id="badge-emission-intensity">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="methodology-note mt-6">
+                <strong>About the CUFET Model:</strong> As detailed in the accompanying publication 
+                <em>A Simple Tool to Estimate Transport GHGs Mitigated from Compact Urban Form (MDPI Applied Sciences, 2026)</em>, 
+                urban density operates as a robust proxy for the 'D-variables' of compact form. Shifting to compact form shrinks trip lengths 
+                and fosters active/transit modal shifts. The impact of density increases is modeled non-linearly, showing significantly higher 
+                returns in Small and Medium sized settlements than in Large cities.
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>&copy; 2026 Climatebase Fellowship &amp; Curtin University Sustainability Policy Institute. Built for interactive spatial policy assessment.</p>
+    </footer>
+
+    <!-- App Logic Script -->
+    <script src="app.js"></script>
+</body>
+</html>
