@@ -23,7 +23,6 @@ let activeCountry = "";
 let activeCity = "";
 let chartVkt = null;
 let chartCo2 = null;
-let animationId = null;
 
 // DOM Elements
 const countrySelect = document.getElementById("country-select");
@@ -70,9 +69,20 @@ const geoEffectsDesc = document.getElementById("geo-effects-desc");
 const badgeCountryFe = document.getElementById("badge-country-fe");
 const badgeEmissionIntensity = document.getElementById("badge-emission-intensity");
 
-// Canvas setup
-const canvas = document.getElementById("density-canvas");
-const ctx = canvas.getContext("2d");
+// Formula Table Elements
+const calcBaseFe = document.getElementById("calc-base-fe");
+const calcPropFe = document.getElementById("calc-prop-fe");
+const calcBaseSizeDev = document.getElementById("calc-base-sizedev");
+const calcPropSizeDev = document.getElementById("calc-prop-sizedev");
+const calcBasePopTerm = document.getElementById("calc-base-popterm");
+const calcPropPopTerm = document.getElementById("calc-prop-popterm");
+const calcBaseDensTerm = document.getElementById("calc-base-densterm");
+const calcPropDensTerm = document.getElementById("calc-prop-densterm");
+const calcBaseLnVkt = document.getElementById("calc-base-lnvkt");
+const calcPropLnVkt = document.getElementById("calc-prop-lnvkt");
+const calcBaseVkt = document.getElementById("calc-base-vkt");
+const calcPropVkt = document.getElementById("calc-prop-vkt");
+const co2MathDetails = document.getElementById("co2-math-details");
 
 // Helper: Format numbers
 function formatNumber(num, decimals = 0) {
@@ -161,11 +171,6 @@ function initializeUI() {
 
     // Initialize Charts
     initCharts();
-
-    // Initialize City Simulation Loop
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-    startSimulationLoop();
 }
 
 // Handle Country Change
@@ -332,7 +337,12 @@ function calculateCUFET(country, city, pop, area, evShare) {
         iceVkt,
         totalCO2e,
         co2ePerCapita,
-        vktPerCapita
+        vktPerCapita,
+        interceptDev,
+        lnPop,
+        lnDensity,
+        predictedLnVkt,
+        evShare
     };
 }
 
@@ -401,8 +411,29 @@ function updateDashboard(baseline, proposed, pop, baselineArea, proposedArea, co
     // 3. Update Charts
     updateCharts(baseline, proposed);
 
-    // 4. Update Canvas Overlay Text
-    document.getElementById("compactness-overlay-text").textContent = compactness === 0 ? "Sprawl baseline" : `+${compactness}% Density`;
+    // 4. Populate Live Formula Breakdowns
+    calcBaseFe.textContent = baseline.countryFe.toFixed(4);
+    calcPropFe.textContent = proposed.countryFe.toFixed(4);
+    
+    calcBaseSizeDev.textContent = baseline.interceptDev.toFixed(4);
+    calcPropSizeDev.textContent = proposed.interceptDev.toFixed(4);
+    
+    calcBasePopTerm.innerHTML = `${baseline.slopePop.toFixed(4)} &times; ${baseline.lnPop.toFixed(4)} = <span class="text-white-muted">${(baseline.slopePop * baseline.lnPop).toFixed(4)}</span>`;
+    calcPropPopTerm.innerHTML = `${proposed.slopePop.toFixed(4)} &times; ${proposed.lnPop.toFixed(4)} = <span class="text-white-muted">${(proposed.slopePop * proposed.lnPop).toFixed(4)}</span>`;
+    
+    calcBaseDensTerm.innerHTML = `${baseline.slopeDensity.toFixed(4)} &times; ${baseline.lnDensity.toFixed(4)} = <span class="text-white-muted">${(baseline.slopeDensity * baseline.lnDensity).toFixed(4)}</span>`;
+    calcPropDensTerm.innerHTML = `${proposed.slopeDensity.toFixed(4)} &times; ${proposed.lnDensity.toFixed(4)} = <span class="text-white-muted">${(proposed.slopeDensity * proposed.lnDensity).toFixed(4)}</span>`;
+    
+    calcBaseLnVkt.textContent = baseline.predictedLnVkt.toFixed(4);
+    calcPropLnVkt.textContent = proposed.predictedLnVkt.toFixed(4);
+    
+    calcBaseVkt.textContent = formatNumber(baseline.vkt, 1);
+    calcPropVkt.textContent = formatNumber(proposed.vkt, 1);
+
+    // Dynamic CO2 Math Details
+    co2MathDetails.innerHTML = 
+        `<strong>Baseline:</strong> ${formatNumber(baseline.vkt, 1)} &times; (1 - ${(baseline.evShare / 100).toFixed(2)}) &times; ${baseline.emissionIntensity.toFixed(1)} g/km &divide; 1M = <strong>${formatNumber(baseline.totalCO2e, 1)} tonnes</strong><br>` +
+        `<strong>Proposed:</strong> ${formatNumber(proposed.vkt, 1)} &times; (1 - ${(proposed.evShare / 100).toFixed(2)}) &times; ${proposed.emissionIntensity.toFixed(1)} g/km &divide; 1M = <strong>${formatNumber(proposed.totalCO2e, 1)} tonnes</strong>`;
 }
 
 // Charts Initialization
@@ -495,233 +526,6 @@ function updateCharts(baseline, proposed) {
 
     chartCo2.data.datasets[0].data = [baseline.totalCO2e, proposed.totalCO2e];
     chartCo2.update();
-}
-
-// Canvas Visualizer Engine: Dynamic Sprawl vs Compact Form Animation
-let particles = [];
-let roadGrid = [];
-let buildSpots = [];
-let borderScale = 1.0;
-
-function resizeCanvas() {
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * window.devicePixelRatio;
-    canvas.height = 250 * window.devicePixelRatio;
-    
-    // Regrid roads and buildings
-    initializeCityLayout();
-}
-
-function initializeCityLayout() {
-    const w = canvas.width;
-    const h = canvas.height;
-    
-    // Define a 2D layout grid for buildings
-    buildSpots = [];
-    const cols = 24;
-    const rows = 12;
-    const spacingX = w / cols;
-    const spacingY = h / rows;
-    
-    for (let c = 1; c < cols; c++) {
-        for (let r = 1; r < rows; r++) {
-            // Give each spot coordinates and offsets
-            buildSpots.push({
-                x: c * spacingX,
-                y: r * spacingY,
-                offsetX: (Math.random() - 0.5) * (spacingX * 0.4),
-                offsetY: (Math.random() - 0.5) * (spacingY * 0.4),
-                size: 6 + Math.random() * 6,
-                type: Math.random() > 0.85 ? 'high' : 'low',
-                visible: true
-            });
-        }
-    }
-
-    // Set up particles representing cars / citizens moving on roads
-    particles = [];
-    const carCount = 45;
-    for (let i = 0; i < carCount; i++) {
-        particles.push({
-            x: Math.random() * w,
-            y: Math.random() * h,
-            speed: 0.5 + Math.random() * 1.5,
-            dir: Math.random() > 0.5 ? 'h' : 'v',
-            color: Math.random() > 0.8 ? '#10b981' : '#64748b' // some EVs (green), some normal (grey)
-        });
-    }
-}
-
-function startSimulationLoop() {
-    function animate() {
-        drawCityGrid();
-        animationId = requestAnimationFrame(animate);
-    }
-    animate();
-}
-
-function drawCityGrid() {
-    const w = canvas.width;
-    const h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-    
-    // Retrieve target parameters
-    const compactness = parseInt(compactnessSlider.value);
-    const targetEv = parseInt(targetEvSlider.value);
-    
-    // Scale representation (compact form pulls building layout closer to center)
-    // compactness of 300% means 4x density, so dimensions shrink to 1/2 of baseline
-    const targetScale = 1.0 / Math.sqrt(1 + compactness / 100);
-    borderScale += (targetScale - borderScale) * 0.08; // smooth easing
-
-    const centerX = w / 2;
-    const centerY = h / 2;
-
-    // Draw boundary box (urban bounds)
-    ctx.strokeStyle = 'rgba(59, 130, 246, 0.2)';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([6, 6]);
-    ctx.strokeRect(
-        centerX - (w / 2 * 0.85) * borderScale,
-        centerY - (h / 2 * 0.8) * borderScale,
-        w * 0.85 * borderScale,
-        h * 0.8 * borderScale
-    );
-    ctx.setLineDash([]);
-
-    // Draw grid roads
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.025)';
-    ctx.lineWidth = 1;
-    // Horizontal roads
-    for (let y = centerY - (h/2 * 0.8) * borderScale; y <= centerY + (h/2 * 0.8) * borderScale; y += 25 * borderScale) {
-        ctx.beginPath();
-        ctx.moveTo(centerX - (w/2 * 0.85) * borderScale, y);
-        ctx.lineTo(centerX + (w/2 * 0.85) * borderScale, y);
-        ctx.stroke();
-    }
-    // Vertical roads
-    for (let x = centerX - (w/2 * 0.85) * borderScale; x <= centerX + (w/2 * 0.85) * borderScale; x += 35 * borderScale) {
-        ctx.beginPath();
-        ctx.moveTo(x, centerY - (h/2 * 0.8) * borderScale);
-        ctx.lineTo(x, centerY + (h/2 * 0.8) * borderScale);
-        ctx.stroke();
-    }
-
-    // Draw high density corridor transit line (if compactness > 50%)
-    if (compactness > 50) {
-        ctx.strokeStyle = 'rgba(59, 130, 246, 0.4)';
-        ctx.lineWidth = 4 * borderScale;
-        ctx.beginPath();
-        ctx.moveTo(centerX - (w/2 * 0.75) * borderScale, centerY);
-        ctx.lineTo(centerX + (w/2 * 0.75) * borderScale, centerY);
-        ctx.stroke();
-        
-        // draw a small train or transit icon
-        const trainX = centerX + Math.sin(Date.now() / 2000) * (w/2 * 0.65) * borderScale;
-        ctx.fillStyle = '#3b82f6';
-        ctx.fillRect(trainX - 10 * borderScale, centerY - 4 * borderScale, 20 * borderScale, 8 * borderScale);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(trainX + 4 * borderScale, centerY - 2 * borderScale, 4 * borderScale, 4 * borderScale);
-    }
-
-    // Draw buildings
-    buildSpots.forEach((spot, i) => {
-        // Calculate spot relative to center and scale
-        const relX = spot.x - centerX;
-        const relY = spot.y - centerY;
-        
-        const drawX = centerX + relX * borderScale + spot.offsetX * borderScale;
-        const drawY = centerY + relY * borderScale + spot.offsetY * borderScale;
-
-        // Clip drawing to bounds
-        const boundLeft = centerX - (w / 2 * 0.85) * borderScale;
-        const boundRight = centerX + (w / 2 * 0.85) * borderScale;
-        const boundTop = centerY - (h / 2 * 0.8) * borderScale;
-        const boundBottom = centerY + (h / 2 * 0.8) * borderScale;
-
-        // Skip buildings that fell out of scaled bounds
-        if (drawX < boundLeft || drawX > boundRight || drawY < boundTop || drawY > boundBottom) {
-            return;
-        }
-
-        // Density effects: high density buildings appear in center as compactness grows
-        const distFromCenter = Math.sqrt(relX * relX + relY * relY);
-        const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
-        const centerProximity = 1.0 - (distFromCenter / maxDist);
-        
-        // As density increases, center spots mutate into high-density buildings
-        const isHighDensity = spot.type === 'high' || (compactness > 50 && centerProximity > (0.8 - compactness/400));
-        
-        if (isHighDensity) {
-            // Draw high density block (Apartments)
-            // Color shifts green (sustainable/transit-oriented)
-            ctx.fillStyle = compactness > 100 ? 'rgba(16, 185, 129, 0.75)' : 'rgba(59, 130, 246, 0.65)';
-            const blockW = (spot.size * 0.85) * borderScale;
-            // Draw taller block
-            const blockH = (spot.size * 1.6) * borderScale;
-            ctx.fillRect(drawX - blockW / 2, drawY - blockH / 2, blockW, blockH);
-            
-            // Draw little window dots
-            ctx.fillStyle = '#ffffff';
-            const winSpacing = Math.max(2 * borderScale, 1.5);
-            ctx.fillRect(drawX - blockW/4, drawY - blockH/4, 2 * borderScale, 2 * borderScale);
-            ctx.fillRect(drawX + blockW/12, drawY - blockH/4, 2 * borderScale, 2 * borderScale);
-            ctx.fillRect(drawX - blockW/4, drawY + blockH/12, 2 * borderScale, 2 * borderScale);
-            ctx.fillRect(drawX + blockW/12, drawY + blockH/12, 2 * borderScale, 2 * borderScale);
-        } else {
-            // Draw low density house (sprawl)
-            ctx.fillStyle = 'rgba(239, 68, 68, 0.55)';
-            const size = spot.size * borderScale;
-            
-            ctx.beginPath();
-            // roof triangle
-            ctx.moveTo(drawX, drawY - size/2);
-            ctx.lineTo(drawX - size/2, drawY);
-            ctx.lineTo(drawX + size/2, drawY);
-            ctx.closePath();
-            ctx.fill();
-            
-            // wall square
-            ctx.fillRect(drawX - size/2.5, drawY, size/1.25, size/2);
-        }
-    });
-
-    // Draw and animate particles (traffic flow)
-    particles.forEach(p => {
-        // Particles move inside boundaries, or wrap around
-        const boundLeft = centerX - (w / 2 * 0.85) * borderScale;
-        const boundRight = centerX + (w / 2 * 0.85) * borderScale;
-        const boundTop = centerY - (h / 2 * 0.8) * borderScale;
-        const boundBottom = centerY + (h / 2 * 0.8) * borderScale;
-
-        // Move particle
-        if (p.dir === 'h') {
-            p.x += p.speed * borderScale;
-            if (p.x > boundRight) p.x = boundLeft;
-            if (p.x < boundLeft) p.x = boundRight;
-            // Keep vertical within bounds
-            if (p.y < boundTop || p.y > boundBottom) {
-                p.y = boundTop + Math.random() * (boundBottom - boundTop);
-            }
-        } else {
-            p.y += p.speed * borderScale;
-            if (p.y > boundBottom) p.y = boundTop;
-            if (p.y < boundTop) p.y = boundBottom;
-            // Keep horizontal within bounds
-            if (p.x < boundLeft || p.x > boundRight) {
-                p.x = boundLeft + Math.random() * (boundRight - boundLeft);
-            }
-        }
-
-        // Color cars green depending on target EV share
-        const randId = Math.random() * 100;
-        const isEvCar = randId < targetEv;
-        ctx.fillStyle = isEvCar ? '#10b981' : '#64748b';
-        
-        // Draw car
-        const carSize = Math.max(3 * borderScale, 2);
-        ctx.fillRect(p.x - carSize / 2, p.y - carSize / 2, carSize * 1.5, carSize);
-    });
 }
 
 // Initial dataset fetch

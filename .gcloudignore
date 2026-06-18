@@ -1,0 +1,26 @@
+# .gcloudignore
+# Exclude files when packaging source code for Google Cloud Build
+
+# Git
+.git/
+.gitignore
+
+# Docker config
+.dockerignore
+
+# Deployment files
+.gcloudignore
+deploy_gcp.sh
+
+# Excel and PDF raw documentation
+CUFET.xlsx
+applsci-16-05828.pdf
+verify_math.py
+*.xlsx
+*.pdf
+*.py
+*.zip
+*.log
+
+# Markdown documentation
+*.md

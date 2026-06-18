@@ -156,22 +156,89 @@
             <!-- RIGHT PANEL: Visuals & Comparative Charts -->
             <section class="visuals-panel">
                 
-                <!-- Density Map Visualizer -->
+                <!-- Formula & Live Calculations Breakdown -->
                 <article class="visualizer-card glass-card">
-                    <div class="visualizer-header">
-                        <div>
-                            <h2>Interactive City Density Visualizer</h2>
-                            <p class="card-subtitle" id="visualizer-subtitle">Simulating exurban sprawl vs. compact walkable corridors</p>
-                        </div>
-                        <div class="legend">
-                            <span class="legend-item"><span class="legend-color residential"></span>House</span>
-                            <span class="legend-item"><span class="legend-color highdense"></span>Apartment</span>
-                            <span class="legend-item"><span class="legend-color transit"></span>Transit</span>
+                    <div class="card-header">
+                        <h2>Model Formula &amp; Live Calculations</h2>
+                        <p class="card-subtitle">Live breakdown of the CUFET Weighted Least Squares (WLS) regression model</p>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <div class="formula-expression">
+                            ln(VKT) = &beta;₀ + &delta;<sub>k</sub> + d<sub>I</sub> + &beta;₁&middot;ln(Pop) + &beta;₂&middot;ln(Density)
                         </div>
                     </div>
-                    <div class="canvas-container">
-                        <canvas id="density-canvas"></canvas>
-                        <div class="canvas-overlay" id="compactness-overlay-text">0% Compactness</div>
+
+                    <div class="table-responsive">
+                        <table class="calc-table">
+                            <thead>
+                                <tr>
+                                    <th>Variable / Coefficient</th>
+                                    <th>Baseline Scenario</th>
+                                    <th>Proposed Scenario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="var-name">&beta;₀ <span class="var-desc">(Global Intercept)</span></div>
+                                    </td>
+                                    <td id="calc-base-beta0">7.5948</td>
+                                    <td id="calc-prop-beta0">7.5948</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="var-name">&delta;<sub>k</sub> <span class="var-desc">(Country FE)</span></div>
+                                    </td>
+                                    <td id="calc-base-fe">--</td>
+                                    <td id="calc-prop-fe">--</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="var-name">d<sub>I</sub> <span class="var-desc">(Size Intercept Dev)</span></div>
+                                    </td>
+                                    <td id="calc-base-sizedev">--</td>
+                                    <td id="calc-prop-sizedev">--</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="var-name">&beta;₁&middot;ln(Pop) <span class="var-desc">(Population Term)</span></div>
+                                    </td>
+                                    <td id="calc-base-popterm">--</td>
+                                    <td id="calc-prop-popterm">--</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="var-name">&beta;₂&middot;ln(Density) <span class="var-desc">(Density Term)</span></div>
+                                    </td>
+                                    <td id="calc-base-densterm">--</td>
+                                    <td id="calc-prop-densterm">--</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td>
+                                        <div class="var-name">ln(VKT) <span class="var-desc">(Sum of Log Terms)</span></div>
+                                    </td>
+                                    <td id="calc-base-lnvkt">--</td>
+                                    <td id="calc-prop-lnvkt">--</td>
+                                </tr>
+                                <tr class="final-row">
+                                    <td>
+                                        <div class="var-name">Predicted VKT <span class="var-desc">(exp(ln(VKT)))</span></div>
+                                    </td>
+                                    <td id="calc-base-vkt">--</td>
+                                    <td id="calc-prop-vkt">--</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="formula-box secondary mt-4">
+                        <div class="formula-expression small">
+                            CO₂e (tonnes) = VKT &times; (1 - %EV/100) &times; EI / 1,000,000
+                        </div>
+                        <div class="formula-math-details" id="co2-math-details">
+                            Baseline: --<br>Proposed: --
+                        </div>
                     </div>
                 </article>
 
