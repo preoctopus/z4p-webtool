@@ -1,32 +1,32 @@
 /* Modern Web CSS Custom Properties (Theme tokens) */
 :root {
-    --bg-main: #0b0f19;
-    --bg-surface: rgba(17, 24, 39, 0.7);
-    --bg-card: rgba(30, 41, 59, 0.45);
+    --bg-main: #f5f7f5;
+    --bg-surface: rgba(255, 255, 255, 0.78);
+    --bg-card: rgba(255, 255, 255, 0.78);
     
-    --color-primary: #3b82f6;
-    --color-primary-glow: rgba(59, 130, 246, 0.35);
-    --color-accent: #10b981;
-    --color-accent-glow: rgba(16, 185, 129, 0.35);
+    --color-primary: #285f5c;
+    --color-primary-glow: rgba(40, 95, 92, 0.08);
+    --color-accent: #8970b2;
+    --color-accent-glow: rgba(137, 112, 178, 0.12);
     
-    --color-text: #f3f4f6;
-    --color-text-muted: #9ca3af;
-    --color-text-dark: #1f2937;
+    --color-text: #1b3a38;
+    --color-text-muted: #5c7c7a;
+    --color-text-dark: #0a1615;
     
-    --color-danger: #ef4444;
-    --color-warning: #f59e0b;
-    --color-safe: #10b981;
-    --color-safe-glow: rgba(16, 185, 129, 0.15);
-    --color-alert-glow: rgba(239, 68, 68, 0.15);
+    --color-danger: #e76f51;
+    --color-warning: #d6b14f;
+    --color-safe: #79cab7;
+    --color-safe-glow: rgba(121, 202, 183, 0.15);
+    --color-alert-glow: rgba(231, 111, 81, 0.15);
 
-    --border-color: rgba(255, 255, 255, 0.08);
-    --border-hover: rgba(255, 255, 255, 0.18);
+    --border-color: rgba(40, 95, 92, 0.12);
+    --border-hover: rgba(40, 95, 92, 0.25);
     
     --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     
     --card-radius: 16px;
-    --inner-radius: 8px;
+    --inner-radius: 10px;
     
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -75,7 +75,7 @@ body {
     right: 5%;
     width: 50vw;
     height: 50vw;
-    background: radial-gradient(circle, #2563eb 0%, transparent 70%);
+    background: radial-gradient(circle, #e2e568 0%, transparent 70%);
 }
 
 .glow-2 {
@@ -83,12 +83,12 @@ body {
     left: -10%;
     width: 60vw;
     height: 60vw;
-    background: radial-gradient(circle, #0d9488 0%, transparent 70%);
+    background: radial-gradient(circle, #dcd0e1 0%, transparent 70%);
 }
 
 /* Header Styles */
 .app-header {
-    background-color: rgba(11, 15, 25, 0.8);
+    background-color: rgba(255, 255, 255, 0.8);
     border-bottom: 1px solid var(--border-color);
     padding: 1.25rem 2rem;
     position: sticky;
@@ -120,7 +120,7 @@ body {
     font-weight: 800;
     font-size: 1.75rem;
     letter-spacing: -0.03em;
-    background: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+    background: linear-gradient(135deg, var(--color-primary) 30%, #8970b2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     line-height: 1.1;
@@ -133,15 +133,15 @@ body {
 }
 
 .header-tag {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-color);
+    background: rgba(137, 112, 178, 0.12);
+    border: 1px solid rgba(137, 112, 178, 0.3);
     padding: 0.35rem 0.85rem;
     border-radius: 9999px;
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: #60a5fa;
+    color: #8970b2;
 }
 
 /* Dashboard Layout Grid */
@@ -240,7 +240,7 @@ label {
 }
 
 input[type="text"] {
-    background: rgba(15, 23, 42, 0.6);
+    background: rgba(255, 255, 255, 0.95);
     border: 1px solid var(--border-color);
     border-radius: var(--inner-radius);
     padding: 0.65rem 0.85rem;
@@ -264,7 +264,7 @@ input[type="text"]:focus {
 
 select {
     width: 100%;
-    background: rgba(15, 23, 42, 0.7) url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 0.75rem center/1.25rem;
+    background: rgba(255, 255, 255, 0.95) url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%235c7c7a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 0.75rem center/1.25rem;
     border: 1px solid var(--border-color);
     border-radius: var(--inner-radius);
     padding: 0.65rem 2.25rem 0.65rem 0.85rem;
@@ -312,7 +312,7 @@ select option {
 
 .slider-val-badge.highlight {
     background: var(--color-accent-glow);
-    color: #34d399;
+    color: var(--color-accent);
 }
 
 .custom-slider {
@@ -320,7 +320,7 @@ select option {
     width: 100%;
     height: 6px;
     border-radius: 3px;
-    background: rgba(15, 23, 42, 0.7);
+    background: rgba(40, 95, 92, 0.12);
     outline: none;
     transition: background var(--transition-fast);
 }
@@ -357,7 +357,7 @@ select option {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    background: rgba(15, 23, 42, 0.3);
+    background: rgba(40, 95, 92, 0.04);
     padding: 0.5rem 0.75rem;
     border-radius: var(--inner-radius);
     font-size: 0.85rem;
@@ -368,7 +368,7 @@ select option {
 }
 
 .density-val {
-    color: #60a5fa;
+    color: var(--color-safe);
     font-family: monospace;
 }
 
@@ -525,18 +525,23 @@ select option {
 }
 
 .highlight-metric-card {
-    background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), rgba(30, 41, 59, 0.45));
-    border-color: rgba(16, 185, 129, 0.25);
+    background: linear-gradient(135deg, rgba(121, 202, 183, 0.12) 0%, rgba(137, 112, 178, 0.12) 100%);
+    border: 1px solid rgba(121, 202, 183, 0.35);
     transition: all var(--transition-normal);
 }
 
 .highlight-metric-card.red-alert {
-    background: radial-gradient(circle at top right, rgba(239, 68, 68, 0.12), rgba(30, 41, 59, 0.45));
-    border-color: rgba(239, 68, 68, 0.25);
+    background: linear-gradient(135deg, rgba(231, 111, 81, 0.12) 0%, rgba(137, 112, 178, 0.12) 100%);
+    border-color: rgba(231, 111, 81, 0.35);
+}
+
+.highlight-metric-card.warn-alert {
+    background: linear-gradient(135deg, rgba(214, 177, 79, 0.12) 0%, rgba(137, 112, 178, 0.12) 100%);
+    border-color: rgba(214, 177, 79, 0.35);
 }
 
 .text-white-muted {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--color-text-muted);
 }
 
 .metric-flex {
@@ -560,7 +565,7 @@ select option {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 7px solid rgba(255, 255, 255, 0.05);
+    border: 7px solid rgba(40, 95, 92, 0.1);
 }
 
 .gauge-ring-fill {
@@ -640,7 +645,7 @@ select option {
 }
 
 .elasticity-badge {
-    background: rgba(15, 23, 42, 0.4);
+    background: rgba(40, 95, 92, 0.04);
     border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 0.35rem 0.65rem;
@@ -658,7 +663,7 @@ select option {
 .badge-val {
     font-family: monospace;
     font-weight: 700;
-    color: #60a5fa;
+    color: var(--color-primary);
 }
 
 .methodology-note {
@@ -675,7 +680,7 @@ select option {
     font-size: 0.75rem;
     color: var(--color-text-muted);
     border-top: 1px solid var(--border-color);
-    background-color: rgba(5, 7, 12, 0.6);
+    background-color: rgba(40, 95, 92, 0.03);
     margin-top: auto;
 }
 
@@ -738,20 +743,20 @@ select option {
 
 /* Formula & Calculations Breakdown Styling */
 .formula-box {
-    background: rgba(15, 23, 42, 0.6);
+    background: rgba(40, 95, 92, 0.04);
     border: 1px solid var(--border-color);
     border-radius: var(--inner-radius);
     padding: 0.85rem;
     text-align: center;
     margin-bottom: 1rem;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 2px 4px rgba(40, 95, 92, 0.05);
 }
 
 .formula-expression {
     font-family: monospace;
     font-size: 1.05rem;
     font-weight: 700;
-    color: #60a5fa;
+    color: var(--color-primary);
     letter-spacing: 0.02em;
 }
 
@@ -761,8 +766,8 @@ select option {
 }
 
 .formula-box.secondary {
-    background: rgba(16, 185, 129, 0.04);
-    border-color: rgba(16, 185, 129, 0.15);
+    background: rgba(121, 202, 183, 0.08);
+    border-color: rgba(121, 202, 183, 0.25);
     text-align: left;
     padding: 0.75rem 1rem;
     margin-bottom: 0;
@@ -771,7 +776,7 @@ select option {
 .formula-math-details {
     font-family: monospace;
     font-size: 0.8rem;
-    color: #cbd5e1;
+    color: var(--color-text-muted);
     margin-top: 0.5rem;
     line-height: 1.4;
     white-space: pre-line;
@@ -782,7 +787,7 @@ select option {
     overflow-x: auto;
     border-radius: var(--inner-radius);
     border: 1px solid var(--border-color);
-    background: rgba(15, 23, 42, 0.3);
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .calc-table {
@@ -798,7 +803,7 @@ select option {
 }
 
 .calc-table th {
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(40, 95, 92, 0.06);
     font-family: var(--font-heading);
     font-weight: 600;
     color: var(--color-text-muted);
@@ -809,9 +814,9 @@ select option {
 }
 
 .calc-table td {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(40, 95, 92, 0.08);
     font-family: monospace;
-    color: #e2e8f0;
+    color: var(--color-text);
 }
 
 .calc-table tr:last-child td {
@@ -820,7 +825,7 @@ select option {
 
 .var-name {
     font-weight: 600;
-    color: #60a5fa;
+    color: var(--color-primary);
     font-family: var(--font-body);
 }
 
@@ -833,17 +838,17 @@ select option {
 }
 
 .calc-table .total-row td {
-    background: rgba(59, 130, 246, 0.08);
-    border-top: 1px solid rgba(59, 130, 246, 0.25);
-    border-bottom: 1px solid rgba(59, 130, 246, 0.25);
+    background: rgba(40, 95, 92, 0.05);
+    border-top: 1px solid rgba(40, 95, 92, 0.2);
+    border-bottom: 1px solid rgba(40, 95, 92, 0.2);
     font-weight: 700;
-    color: #93c5fd;
+    color: var(--color-primary);
 }
 
 .calc-table .final-row td {
-    background: rgba(16, 185, 129, 0.12);
-    border-top: 1px solid rgba(16, 185, 129, 0.25);
+    background: rgba(121, 202, 183, 0.15);
+    border-top: 1px solid rgba(121, 202, 183, 0.35);
     font-weight: 700;
-    color: #34d399;
+    color: var(--color-primary);
     font-size: 0.95rem;
 }

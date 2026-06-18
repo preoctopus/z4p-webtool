@@ -451,12 +451,12 @@ function initCharts() {
             },
             scales: {
                 y: {
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                    ticks: { color: '#9ca3af', font: { size: 10 } }
+                    grid: { color: 'rgba(40, 95, 92, 0.08)' },
+                    ticks: { color: '#5c7c7a', font: { size: 10 } }
                 },
                 x: {
                     grid: { display: false },
-                    ticks: { color: '#9ca3af', font: { size: 10 } }
+                    ticks: { color: '#5c7c7a', font: { size: 10 } }
                 }
             }
         }
@@ -469,7 +469,7 @@ function initCharts() {
             labels: ['Baseline', 'Proposed'],
             datasets: [{
                 data: [0, 0],
-                backgroundColor: ['#3b82f6', '#10b981'],
+                backgroundColor: ['#285f5c', '#79cab7'],
                 borderRadius: 6,
                 borderWidth: 0,
                 barThickness: 45
@@ -481,7 +481,7 @@ function initCharts() {
                 title: {
                     display: true,
                     text: 'Annual VKT comparison',
-                    color: '#f3f4f6',
+                    color: '#1b3a38',
                     font: { size: 12, family: 'Outfit', weight: '600' }
                 },
                 legend: { display: false }
@@ -496,7 +496,7 @@ function initCharts() {
             labels: ['Baseline', 'Proposed'],
             datasets: [{
                 data: [0, 0],
-                backgroundColor: ['#475569', '#10b981'],
+                backgroundColor: ['#8970b2', '#79cab7'],
                 borderRadius: 6,
                 borderWidth: 0,
                 barThickness: 45
@@ -508,7 +508,7 @@ function initCharts() {
                 title: {
                     display: true,
                     text: 'Total emissions (t CO₂e)',
-                    color: '#f3f4f6',
+                    color: '#1b3a38',
                     font: { size: 12, family: 'Outfit', weight: '600' }
                 },
                 legend: { display: false }
